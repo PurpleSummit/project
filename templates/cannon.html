@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<title>Cannonball Fire</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cannon.css') }}">
+{% endblock %}
+
+{% block title %}
+<h1 id="title">Cannonball Fire</h1>
+{% endblock %}
+
+{% block body %}
+<form class="input" name="variables" method="POST" autocomplete="off" target="plotWindow">
+    Angle of cannon: <input id="cannon_angle" name="cannon_angle" type="text">
+    <br>
+    Initial velocity of cannonball: <input id="cannon_speed" name="cannon_speed" type="text">
+    <br>
+    Unit of distance: <select name="d_unit" id="distance_unit" required>
+        <option value="feet">feet</option>
+        <option value="meters">meters</option>
+    </select>
+    <br>
+    Unit of time: <select name="t_unit" id="time_unit" required>
+        <option value="seconds">seconds</option>
+    </select>
+    <br>
+    <button id="update" type="button">Run</button>
+    <!-- <button class="plot" type="submit">Plot</button> -->
+    <br>
+    <h3 id="error"></h3>
+</form>
+
+<div class="area">
+<img id="arrow" src="../static/images/arrow.svg" alt="arrow">
+<div id="cannonball"></div>
+<h3 id="output"></h3>
+<h3 id="anim_output"></h3>
+</div>
+
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='js_files/formulae.js') }}"></script>
+<script src="{{ url_for('static', filename='js_files/animations.js') }}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("update").addEventListener("click", fireCannon);
+        const cannonball = document.getElementById("cannonball");
+        const computedStyle = getComputedStyle(cannonball);
+        const orig_bottom = computedStyle.bottom.replace('px', '');
+        const orig_left = computedStyle.left.replace('px', '');
+
+        function fireCannon() {
+            let theta = document.getElementById("cannon_angle").value;
+            let v0 = document.getElementById("cannon_speed").value;
+            let time_unit = document.getElementById("time_unit").value;
+            let distance_unit = document.getElementById("distance_unit").value;
+            let error = document.getElementById("error");
+            let output = document.getElementById("output");
+            let anim_output = document.getElementById("anim_output");
+
+            error.innerHTML = "";
+
+            // validate theta
+            if (isNaN(theta) || theta == "") {
+                cannonball.style.bottom = orig_bottom;
+                cannonball.style.left = orig_left;
+                anim_output.innerHTML = "(0.000, 0.000)";
+                output.innerHTML = "angle must be a valid number between 15 and 60";
+                return;
+            }
+            else if (theta > 60 || theta < 15) {
+                cannonball.style.bottom = orig_bottom;
+                cannonball.style.left = orig_left;
+                theta = Math.min(60, Math.max(theta, 15));
+                error.innerHTML = `angle invalid. angle set to ${theta} degrees`;
+            }
+
+            // validate v0
+            if (isNaN(v0) || v0 == "" || v0 <= 0) {
+                cannonball.style.bottom = orig_bottom;
+                cannonball.style.left = orig_left;
+                anim_output.innerHTML = "(0.000, 0.000)";
+                output.innerHTML = "initial velocity must be a valid positive number";
+                return;
+            }
+
+            // set initial horizontal and vertical velocities
+            let vy0 = v0 * Math.sin(toRadians(theta));
+            let vx0 = v0 * Math.cos(toRadians(theta));
+
+            let ball;
+            // the time it took to fall
+            if (distance_unit == "meters") {
+                ball = movingBall(vy0, vx0, 9.8);
+            }
+            else if (distance_unit == "feet") {
+                ball = movingBall(vy0, vx0, 32);
+            }
+            let time = ball[0];
+            let x = ball[1];
+            let y = ball[2];
+
+            output.innerHTML = `time taken: ${time} ${time_unit}<br>
+            highest peak: ${y} ${distance_unit}<br>
+            horizontal distance covered: ${x} ${distance_unit}<br>
+            x at highest peak: ${x/2.0} ${distance_unit}`;
+
+            // animation
+            movingBallAnim("cannonball", theta, x, y);
+        }
+
+        function toRadians(n) {
+            let x = Math.sin(n * Math.PI / 180);
+            return x;
+        }
+
+        //document.querySelector('.plot').addEventListener('click', function () {
+        //    window.open('', 'plotWindow', 'width=600,height=400');
+        //
+        // });
+
+    });
+</script>
+{% endblock %}

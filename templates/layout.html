@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/style.css">
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body>
+    {% block title %}
+    {% endblock %}
+    
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/cliff">Cliff</a></li>
+        <li><a href="/cannon">Cannonball Fire</a></li>
+    </ul>
+
+    {% block body %}
+    {% endblock %}
+
+    {% block script %}
+    {% endblock %}
+</body>
+
+</html>

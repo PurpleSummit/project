@@ -1,0 +1,42 @@
+body {
+    background-color: whitesmoke;
+}
+
+h1 {
+    text-align: center;
+}
+
+.area {
+    margin-top: 435px;
+    margin-left: 340px;
+    width: 80vw;
+    height: 0px;
+    border: #000000 solid 2px;
+    position: relative;
+}
+
+.area #arrow {
+    transform-origin: left;
+    transform: rotate(0deg);
+    bottom: -23px;
+    left: -2px;
+    position: absolute;
+    height: 46px;
+    width: 113px;
+}
+
+#cannonball {
+    width: 35px;
+    height: 35px;
+    background-color: black;
+    border-radius: 100%;
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    z-index: -1;
+}
+
+.input {
+    margin-left: 1200px;
+    position: absolute;
+}

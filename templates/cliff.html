@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<title>Down the Cliff</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cliff.css') }}">
+{% endblock %}
+
+{% block title %}
+<h1 id="title">Down the Cliff</h1>
+{% endblock %}
+
+{% block body %}
+<form class="input" name="variables" method="POST" autocomplete="off" target="plotWindow">
+    Height of cliff: <input name="height" id="cliff_height" type="text" min="0" required>
+    <br>
+    Unit of time: <select name="t_unit" id="time_unit" required>
+        <option value="seconds">seconds</option>
+    </select>
+    <br>
+    Unit of distance: <select name="d_unit" id="distance_unit" required>
+        <option value="feet">feet</option>
+        <option value="meters">meters</option>
+    </select>
+    <br>
+    <button id="update" type="button">Run</button>
+    <button class="plot" type="submit">Plot</button>
+</form>
+
+<div class="area">
+    <img id="cliff" src="../static/images/cliff.png" alt="cliff">
+    <div id="cliff_ball"></div>
+    <h3 id="output"></h3>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js_files/formulae.js') }}"></script>
+<script src="{{ url_for('static', filename='js_files/animations.js') }}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("update").addEventListener("click", cliffAction);
+        const orig_ball = document.getElementById("cliff_ball");
+        const orig_height = orig_ball.style.top;
+
+        function cliffAction() {
+            let height = document.getElementById("cliff_height").value;
+            let time_unit = document.getElementById("time_unit").value;
+            let distance_unit = document.getElementById("distance_unit").value;
+            let output = document.getElementById("output");
+
+            // check if 'height' is a number
+            if (isNaN(height) || height == "" || height <= 0) {
+                orig_ball.style.top = orig_height;
+                output.innerHTML = "height must be a valid positive number";
+                return;
+            }
+
+            // the time it took to fall
+            let time;
+            if (distance_unit == "meters") {
+                time = fallingBall(height, 0, 9.8);
+            }
+            else {
+                time = fallingBall(height, 0, 32);
+            }
+
+            // animation
+            output.innerHTML = "time taken: " + time.toString() + " " + time_unit;
+            orig_ball.style.top = orig_height;
+            fallingBallAnim("cliff_ball", 710);
+        }
+        
+        document.querySelector('.plot').addEventListener('click', function () {
+            window.open('', 'plotWindow', 'width=600,height=400');
+        });
+
+    });
+</script>
+{% endblock %}

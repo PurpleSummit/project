@@ -1,0 +1,32 @@
+body {
+    background-color: whitesmoke;
+}
+
+h1 {
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    margin-left: 20px;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position: absolute;
+  }
+
+li {
+    float: block;
+}
+
+li a {
+    display: block;
+    padding: 8px;
+    background-color: #dddddd;
+    color: black;
+    text-decoration: none;
+}
+
+li a:hover {
+    color: darkgrey;
+}
